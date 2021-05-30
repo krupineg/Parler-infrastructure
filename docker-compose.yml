@@ -30,10 +30,8 @@ services:
       - 8080:80
 
   parlr.client.web:
+    image: krupineg/parlr-web
     container_name: parlr.client.web
-    build:
-      context: .
-      dockerfile: Parlr.Client.Web/parlr-web/Dockerfile
     environment:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_parlr_api_random_verb_url=https://localhost:8080/verbs/random
