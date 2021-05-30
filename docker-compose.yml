@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  elasticsearch-data:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
+    container_name: elasticsearch-data
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+        - esdata1:/usr/share/elasticsearch-data/data
+    ports:
+        - 9200:9200
+
+  parlr-api: 
+    image: krupineg/parlr-api
+    container_name: parlr-api
+    environment:
+    ##                  elastic
+      - parlr_storage_type=elastic
+      - parlr_storage_url=http://elasticsearch-data:9200
+      - parlr_storage_name=parlr
+    ports:
+      - 8080:80
+
+  parlr.client.web:
+    container_name: parlr.client.web
+    build:
+      context: .
+      dockerfile: Parlr.Client.Web/parlr-web/Dockerfile
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_parlr_api_random_verb_url=https://localhost:8080/verbs/random
+    ports:
+      - 3000:3000
+
+volumes:
+  esdata1:
+    driver: local
