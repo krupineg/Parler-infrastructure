@@ -17,7 +17,8 @@ services:
         volumes:
             - esdata1:/usr/share/elasticsearch-data/data
         ports:
-            - 9200:9200
+            - 9200:9200    
+        mem_limit: 1g
     parlr-api:
         image: krupineg/parlr-api:latest
         container_name: parlr-api
