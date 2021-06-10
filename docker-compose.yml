@@ -3,6 +3,7 @@ services:
     elasticsearch-data:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
         container_name: elasticsearch-data
+        restart: unless-stopped
         environment:
           - cluster.name=docker-cluster
           - bootstrap.memory_lock=true
@@ -22,37 +23,29 @@ services:
         container_name: parlr-api
         restart: unless-stopped
         environment:
-            - ASPNETCORE_URLS=https://+;http://+
-            - ASPNETCORE_HTTPS_PORT=8001
-            - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-            - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/parlr.pfx
             - parlr_storage_type=elastic
             - parlr_storage_url=http://elasticsearch-data:9200
             - parlr_storage_name=parlr
-        volumes: 
-            - ${HOME}/.aspnet/https:/https/
         ports:
-            - 8080:80
             - 8000:80
-            - 8001:443
     parlr-web:
         image: krupineg/parlr-web:latest
         container_name: parlr-web
         restart: unless-stopped
         environment:
             - CHOKIDAR_USEPOLLING=true
-            - REACT_APP_parlr_api_random_verb_url=https://localhost:8080/verbs/random
+            - REACT_APP_parlr_api_random_verb_url=http://localhost:8000/verbs/random
         ports:
             - 3000:3000
-    
+            - 80:3000
+
     watchtower:
         image: containrrr/watchtower
         container_name: watchtower
         restart: unless-stopped
         volumes: 
-          - /var/run/docker.sock:/var/run/docker.sock
+            - /var/run/docker.sock:/var/run/docker.sock
         command: --interval 60 --cleanup true parlr-api iparlr-web
-
 volumes:
     esdata1:
         driver: local
