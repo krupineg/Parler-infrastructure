@@ -1,7 +1,7 @@
 version: '3.8'
 services:
     elasticsearch-data:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
         container_name: elasticsearch-data
         restart: unless-stopped
         environment:
