@@ -38,7 +38,6 @@ services:
             - REACT_APP_parlr_api_random_verb_url=http://localhost:8000/verbs/random
         ports:
             - 3000:3000
-            - 80:3000
 
     watchtower:
         image: containrrr/watchtower
@@ -47,6 +46,20 @@ services:
         volumes: 
             - /var/run/docker.sock:/var/run/docker.sock
         command: --interval 60 --cleanup true parlr-api iparlr-web
+
+
+    nginx:
+        image: nginx:mainline-alpine
+        container_name: nginx
+        restart: unless-stopped
+        volumes:
+          - ./data/nginx:/etc/nginx/conf.d
+        ports:
+          - "80:80"
+        command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+        depends_on:
+            - parlr-web
+            - parlr-api
 volumes:
     esdata1:
         driver: local
