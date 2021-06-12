@@ -39,15 +39,6 @@ services:
         ports:
             - 3000:3000
 
-    watchtower:
-        image: containrrr/watchtower
-        container_name: watchtower
-        restart: unless-stopped
-        volumes: 
-            - /var/run/docker.sock:/var/run/docker.sock
-        command: --interval 60 --cleanup true parlr-api iparlr-web
-
-
     nginx:
         image: nginx:mainline-alpine
         container_name: nginx
