@@ -37,7 +37,7 @@ services:
         restart: unless-stopped
         environment:
             - CHOKIDAR_USEPOLLING=true
-            - REACT_APP_parlr_api_random_verb_url=http://parlr.me:8000/verbs/random
+            - REACT_APP_parlr_api_random_verb_url=https://parlr.me/verbs/random
         ports:
             - 3000:3000
 
