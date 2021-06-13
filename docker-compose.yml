@@ -18,7 +18,7 @@ services:
             - esdata1:/usr/share/elasticsearch-data/data
         ports:
             - 9200:9200    
-        mem_limit: 2g
+        mem_limit: 1g
 
     parlr-api:
         image: krupineg/parlr-api:latest
@@ -26,7 +26,7 @@ services:
         restart: unless-stopped
         environment:
             - parlr_storage_type=elastic
-            - parlr_storage_url=http://elasticsearch-data:9200
+            - parlr_storage_url=https://parlr.me/data
             - parlr_storage_name=parlr
         ports:
             - 8000:80
