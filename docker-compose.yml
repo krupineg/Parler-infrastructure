@@ -6,10 +6,12 @@ services:
         restart: unless-stopped
         environment:
             - parlr_storage_type=json
-            - parlr_storage_url=../Parler-data/jsons
+            - parlr_storage_url=/usr/tmp/jsons
             - parlr_storage_name=parlr
         ports:
             - 8000:80
+        volumes:
+            - ../Parler-data/jsons:/usr/tmp/jsons
 
     parlr-web:
         image: krupineg/parlr-web:latest
