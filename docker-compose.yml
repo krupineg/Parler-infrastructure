@@ -1,32 +1,12 @@
 version: '3.8'
 services:
-    elasticsearch-data:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
-        container_name: elasticsearch-data
-        restart: unless-stopped
-        environment:
-          - cluster.name=docker-cluster
-          - bootstrap.memory_lock=true
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-          - discovery.type=single-node
-          - JSON_DATA=/usr/share/elasticsearch-data/seed
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
-        volumes:
-            - esdata1:/usr/share/elasticsearch-data/data
-        ports:
-            - 9200:9200    
-        mem_limit: 2g
-
     parlr-api:
         image: krupineg/parlr-api:latest
         container_name: parlr-api
         restart: unless-stopped
         environment:
-            - parlr_storage_type=elastic
-            - parlr_storage_url=http://elasticsearch-data:9200
+            - parlr_storage_type=json
+            - parlr_storage_url=../Parler-data
             - parlr_storage_name=parlr
         ports:
             - 8000:80
