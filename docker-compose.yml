@@ -6,7 +6,7 @@ services:
         restart: unless-stopped
         environment:
             - parlr_storage_type=json
-            - parlr_storage_url=../Parler-data
+            - parlr_storage_url=../Parler-data/jsons
             - parlr_storage_name=parlr
         ports:
             - 8000:80
