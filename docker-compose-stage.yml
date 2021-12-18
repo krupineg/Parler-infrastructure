@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+    parlr-api-stage:
+        image: krupineg/parlr-api:stage
+        container_name: parlr-api-stage
+        restart: unless-stopped
+        environment:
+            - parlr_storage_type=json
+            - parlr_storage_url=/usr/tmp/jsons
+            - parlr_storage_name=parlr
+        ports:
+            - 8000:80
+        volumes:
+            - ../Parler-data/jsons:/usr/tmp/jsons
+
+    parlr-web-stage:
+        image: krupineg/parlr-web:stage
+        container_name: parlr-web-stage
+        restart: unless-stopped
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+            - REACT_APP_parlr_api_random_verb_url=https://parlr.me/verbs/random
+        ports:
+            - 3000:3000
+
+    nginx-stage:
+        image: nginx:mainline-alpine
+        container_name: nginx-stage
+        restart: unless-stopped
+        volumes:
+          - ./data/stage/nginx:/etc/nginx/conf.d
+          - ./data/stage/certbot/conf:/etc/letsencrypt
+          - ./data/stage/certbot/www:/var/www/certbot
+        ports:
+          - "80:80"
+          - "443:443"
+        command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+        depends_on:
+            - parlr-web-stage
+            - parlr-api-stage
+
+    certbot-stage:
+        image: certbot/certbot
+        container_name: certbot-stage
+        restart: unless-stopped
+        volumes:
+            - ./data/stage/certbot/conf:/etc/letsencrypt
+            - ./data/stage/certbot/www:/var/www/certbot
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+        
+volumes:
+    esdata1:
+        driver: local
